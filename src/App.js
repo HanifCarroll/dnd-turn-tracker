@@ -109,7 +109,6 @@ function App() {
   return (
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="App">
-          { phase }
           { isAddingPlayer() && (
               <>
                 <input type="text"
