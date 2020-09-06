@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import './App.css';
-import PlayerCard from "./components/PlayerCard";
+import AddPlayer from "./components/AddPlayer";
+import Button from "./components/Button";
+import PlayersList from "./components/PlayersList";
 
 function App() {
   const inputRef = useRef();
@@ -19,18 +21,8 @@ function App() {
     return result;
   };
 
-  const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? "lightblue" : "lightgrey",
-    padding: 8,
-    width: 250
-  });
-
-
   const onDragEnd = (result) => {
-    // dropped outside the list
-    if (!result.destination) {
-      return;
-    }
+    if (!result.destination) { return; }
 
     const reorderedPlayers = reorder(
         players,
@@ -40,6 +32,7 @@ function App() {
 
     setPlayers(reorderedPlayers)
   }
+
   const endTurn = () => {
     const newlyOrderedPlayers = [...players];
     const oldFirstPlayer = newlyOrderedPlayers.shift();
@@ -109,42 +102,27 @@ function App() {
   return (
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="App">
-          { isAddingPlayer() && (
-              <>
-                <input type="text"
-                       value={ newPlayer }
-                       onChange={ e => setNewPlayer(e.target.value) }
-                       ref={ inputRef }
-                />
-                <button disabled={!newPlayer.trim().length} onClick={ addNewPlayer }>Add Player</button>
-              </>
-          ) }
-          <Droppable droppableId="droppable">
-            {(provided, snapshot) => (
-                <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    style={getListStyle(snapshot.isDraggingOver)}
-                >
-                  {players.map((player, index) => (
-                      <PlayerCard
-                          key={player}
-                          player={player}
-                          index={index}
-                          isRemovePlayer={isRemovePlayer}
-                          removePlayer={removePlayer}
-                      />
-                  ))}
-                  {provided.placeholder}
-                </div>
-            )}
-          </Droppable>
-
-          <button disabled={battleIsDisabled()} onClick={ onButtonClick }>{ getButtonText() }</button>
+          <AddPlayer
+              newPlayer={newPlayer}
+              setNewPlayer={setNewPlayer}
+              inputRef={inputRef}
+              addNewPlayer={addNewPlayer}
+              isAddingPlayer={isAddingPlayer()}
+              />
+          <PlayersList
+            players={players}
+            isRemovePlayer={isRemovePlayer}
+            removePlayer={removePlayer}
+            />
+          <Button
+            disabled={battleIsDisabled()}
+            onClick={onButtonClick}
+            text={getButtonText()}
+            />
           { gameIsInPlay() && (
               <>
-                <button onClick={ toggleIsNewPlayer }>Add Player</button>
-                <button onClick={ () => setIsRemovePlayer(!isRemovePlayer) }>Remove Player</button>
+                <Button onClick={toggleIsNewPlayer} text="Add Player" />
+                <Button onClick={ () => setIsRemovePlayer(!isRemovePlayer) } text="Remove Player" />
               </>
           ) }
         </div>
