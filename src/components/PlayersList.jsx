@@ -4,7 +4,7 @@ import React from "react";
 
 export default function PlayersList({ players, isRemovePlayer, removePlayer }) {
   const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? "lightblue" : "lightgrey",
+    background: isDraggingOver ? "lightblue" : "white",
     padding: 8,
     width: 250
   });
